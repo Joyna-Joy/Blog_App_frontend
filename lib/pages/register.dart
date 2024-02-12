@@ -1,3 +1,4 @@
+import 'package:blog_app_frontend/Service/blogService.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
@@ -8,7 +9,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-String Name="",Age="",Mobile="",Address="",Pincode="",Email="",Password="";
   TextEditingController name1= new TextEditingController();
   TextEditingController age1= new TextEditingController();
   TextEditingController mobile1= new TextEditingController();
@@ -16,6 +16,26 @@ String Name="",Age="",Mobile="",Address="",Pincode="",Email="",Password="";
   TextEditingController pincode1= new TextEditingController();
   TextEditingController email1= new TextEditingController();
   TextEditingController password1= new TextEditingController();
+void SendValuesToApiSignUp() async {
+
+  final response = await BlogApiService().sendData(
+      name1.text,
+      age1.text,
+      mobile1.text,
+      address1.text,
+      pincode1.text,
+      email1.text,
+      password1.text);
+  if(response["status"]=="success")
+  {
+    print("successfully signup");
+  }
+  else
+  {
+    print("Error");
+  }
+
+}
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -107,24 +127,7 @@ String Name="",Age="",Mobile="",Address="",Pincode="",Email="",Password="";
                                 borderRadius: BorderRadius.circular(10)
                             )
                         ),
-                        onPressed:(){
-                          Name=name1.text;
-                          Age=age1.text;
-                          Mobile=mobile1.text;
-                          Address=address1.text;
-                          Pincode=pincode1.text;
-                          Email=email1.text;
-                          Password=password1.text;
-                          setState(() {
-                            print("Name :"+Name);
-                            print("Age :"+Age);
-                            print("Mobile :"+Mobile);
-                            print("Address :"+Address);
-                            print("Pincode :"+Pincode);
-                            print("Email Id : "+Email);
-                            print("Password : "+Password);
-                          });
-                        }, child: Text("Sign Up"))),
+                        onPressed:SendValuesToApiSignUp, child: Text("Sign Up"))),
                 SizedBox(height: 20,),
                 SizedBox(
                     height: 45,
@@ -138,7 +141,6 @@ String Name="",Age="",Mobile="",Address="",Pincode="",Email="",Password="";
                             )
                         ),
                         onPressed:(){Navigator.pop(context);}, child: Text("Back to Menu"))),
-
               ],
             ),
           ),

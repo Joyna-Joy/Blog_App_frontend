@@ -1,6 +1,7 @@
-
+import 'package:blog_app_frontend/Service/blogService.dart';
 import 'package:blog_app_frontend/pages/register.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,9 +11,28 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String email="",pass="";
+  String email="",password="";
   TextEditingController email1=new TextEditingController();
   TextEditingController pass1=new TextEditingController();
+
+  void LoginApiService() async{
+    final responce=await BlogApiService().loginApi(email1.text, pass1.text);
+    if(responce["status"]=="success")
+    {
+      String userId=responce["userdata"]["_id"].toString();
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setString("userId", userId);
+      print("successfully Login:"+userId);
+    }
+    else if(responce["status"]=="Invalid Email")
+    {
+      print("Invalid Email");
+    }
+    else
+      {
+        print("Invalid Password or Email");
+      }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,14 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(10)
                         )
                     ),
-                    onPressed:(){
-                    email=email1.text;
-                    pass=pass1.text;
-                    setState(() {
-                      print("Email Id : "+email);
-                      print("Password : "+pass);
-                    });
-                    }, child:Text("Log In")),
+                    onPressed:LoginApiService, child:Text("Log In")),
               ),
               SizedBox(height: 25,),
               SizedBox(
